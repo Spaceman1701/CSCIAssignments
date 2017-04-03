@@ -1,0 +1,26 @@
+# going to contain lots of different projects, so this will just be a whitelist
+
+# ignore everything
+*
+
+# this file
+!.gitignore
+
+!*/
+
+# generally used file types:
+!*.csv
+!*.txt
+
+# C and C++ ignores
+!*.cpp
+!*.c
+!*.h
+!*.hpp
+
+# Python
+!*.py
+
+# Java
+!*.java
+
