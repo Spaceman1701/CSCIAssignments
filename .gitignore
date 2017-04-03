@@ -11,6 +11,7 @@
 # generally used file types:
 !*.csv
 !*.txt
+!*.md
 
 # C and C++ ignores
 !*.cpp

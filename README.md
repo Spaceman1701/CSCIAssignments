@@ -1,0 +1,1 @@
+This repository is going to contain many of the assignments I do for school. It makes it easier to work on assigments on multiple computers.
