@@ -1,5 +1,4 @@
 #include <iostream>
-<<<<<<< HEAD
 using namespace std;
 int main() {
 
@@ -87,4 +86,3 @@ void load_movies(MovieTree& tree, char* file_name) {
 		tree.addMovieNode(stoi(rank), title, stoi(year), stoi(quantity));
 	}
 }
->>>>>>> origin/master
