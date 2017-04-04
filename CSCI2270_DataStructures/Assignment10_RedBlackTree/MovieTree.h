@@ -48,6 +48,7 @@ class MovieTree
     protected:
 
     private:
+		void addNode(MovieNode* root, MovieNode* new_node)
         void DeleteAll(MovieNode * node); //use this for the post-order traversal deletion of the tree
         void printMovieInventory(MovieNode * node);
         void rbAddFixup(MovieNode * node); // called after insert to fix tree
@@ -59,6 +60,9 @@ class MovieTree
         int rbValid(MovieNode * node); //check if the tree is valid, with node as the root of the tree
         int countMovieNodes(MovieNode *node); //number of unique titles in the tree
         int countLongestPath(MovieNode *node); //longest path from node to a leaf node in the tree
+
+		void printNodeInfo(MovieNode* n);
+
         MovieNode* searchMovieTree(MovieNode * node, std::string title);
         MovieNode *root;
         MovieNode *nil;
