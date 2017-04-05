@@ -221,10 +221,18 @@ void MovieTree::rbDelete(MovieNode* n) {
 			n->parent->leftChild = NULL;
 		}
 	}
-	if ((n->leftChild != NULL) != (n->rightChild != NULL)) {
+	else if ((n->leftChild != NULL) != (n->rightChild != NULL)) {
 		MovieNode* child = n->leftChild ? n->leftChild : n->rightChild;
-
+		if (n->parent) {
+			MovieNode** n_ptr = n->parent->leftChild == n ? &n->parent->leftChild : &n->parent->rightChild;
+			(*n_ptr) = child;
+		}
+		else {
+			root = child;
+		}
+		child->parent = n->parent;
 	}
+	rbDeleteFixup(n);
 }
 
 void MovieTree::rightRotate(MovieNode * x) {
@@ -237,7 +245,9 @@ void MovieTree::rightRotate(MovieNode * x) {
 	new_root->rightChild->parent = new_root;
 }
 
-void MovieTree::rbDeleteFixup(MovieNode * node);
+void MovieTree::rbDeleteFixup(MovieNode * node) {
+
+}
 
 void MovieTree::rbTransplant(MovieNode * u, MovieNode * v);
 
