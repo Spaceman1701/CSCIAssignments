@@ -26,38 +26,15 @@ int MovieTree::countMovieNodes() {
 
 void MovieTree::deleteMovieNode(std::string title) {
 	MovieNode* to_delete = searchMovieTree(root, title);
-	MovieNode* replacement = NULL;
-	MovieNode* child_tree = NULL;
-	if (!to_delete) {
-		cout << "Movie not found." << endl;
+	if (n->leftChild && n->rightChild) {
+		MovieNode* replacement = treeMinimum(n->rightChild);
+		n->title = replacement->title;
+		n->quantity = replacement->quantity;
+		n->ranking = replacement->ranking;
+		n->year = replacement->year;
+		to_delete = replacement;
 	}
-	if (to_delete->rightChild) { //has a right child
-		replacement = treeMinimum(to_delete->rightChild);
-		child_tree = replacement->leftChild;
-	}
-	else if (to_delete->leftChild) { //no right child, but left child
-		replacement = treeMaximum(to_delete->leftChild);
-		child_tree = replacement->rightChild;
-	}
-	else { //no children
-		replacement = to_delete;
-	}
-
-	if (replacement->parent && replacement->parent->leftChild == replacement) {
-		replacement->parent->leftChild = child_tree;
-	}
-	else if (replacement->parent) {
-		replacement->parent->rightChild = child_tree;
-	}
-	else {
-		root = NULL;
-	}
-
-	to_delete->ranking = replacement->ranking;
-	to_delete->title = replacement->title;
-	to_delete->year = replacement->year;
-	to_delete->quantity = replacement->quantity;
-	delete replacement;
+	rbDelete(to_delete);
 }
 
 void MovieTree::addMovieNode(int ranking, std::string title, int releaseYear, int quantity) {
@@ -97,10 +74,6 @@ void MovieTree::rentMovie(std::string title) {
 	}
 }
 
-bool MovieTree::isValid() {
-
-}
-
 void MovieNode::printNodeInfo(MovieNode* n) {
 	cout << "Movie Info:" << endl;
 	cout << "===========" << endl;
@@ -129,6 +102,7 @@ void MovieTree::addNode(MovieNode* tree, MovieNode* new_node) {
 			addNode(tree->rightChild, new_node);
 		}
 	}
+	rbAddFixup(new_node);
 }
 
 void MovieTree::DeleteAll(MovieNode * node) {
@@ -189,7 +163,46 @@ void MovieTree::printMovieInventory(MovieNode* node) {
 }
 
 void MovieTree::rbAddFixup(MovieNode * node) {
+	MovieNode* uncle = NULL;
+	MovieNode* current_node = node;
+	while (1) {
+		if (!current_node->parent) {
+			current_node->isRed = false;
+			return;
+		}
+		else if (!current_node->parent->isRed) {
+			return;
+		}
+		else if ((uncle = getNodeUncle(current_node)) && (uncle->isRed)) {
+			current_node->parent->isRed = false;
+			uncle->isRed = false;
+			current_node = getNodeGrandparent(current_node);
+			current_node->isRed = true;
+		}
+		else {
+			break;
+		}
+	}
+	MovieNode* gp = getNodeGrandparent(current_node);
 
+	if ((current_node == current_node->parent->rightChild) && (n->parent == gp->leftChild)) {
+		leftRotate(current_node->parent);
+		current_node = current_node->leftChild;
+	}
+	else if ((current_node == current_node->parent->leftChild) && (current_node->parent == gp->rightChild)) {
+		rightRotate(current_node->parent);
+		current_node = current_node->rightChild;
+	}
+
+	gp = getNodeGrandparent(current_node);
+	current_node->parent->isRed = false;
+	gp->isRed = true;
+	if (current_node = current_node->parent->leftChild) {
+		rightRotate(gp);
+	}
+	else {
+		leftRotate(gp);
+	}
 }
 
 void MovieTree::leftRotate(MovieNode * x) {
@@ -202,7 +215,17 @@ void MovieTree::leftRotate(MovieNode * x) {
 	new_root->leftChild->parent = new_root;
 }
 
-void MovieTree::rbDelete(MovieNode * z);
+void MovieTree::rbDelete(MovieNode* n) {
+	if (!n->leftChild && !n->rightChild) {
+		if (n == n->parent->leftChild) {
+			n->parent->leftChild = NULL;
+		}
+	}
+	if ((n->leftChild != NULL) != (n->rightChild != NULL)) {
+		MovieNode* child = n->leftChild ? n->leftChild : n->rightChild;
+
+	}
+}
 
 void MovieTree::rightRotate(MovieNode * x) {
 	MovieNode* new_root = x->leftChild;
@@ -271,3 +294,22 @@ int MovieTree::rbValid(MovieNode * node) { //switched "nil" to "null"
 }
 
 int MovieTree::countLongestPath(MovieNode *node);
+
+MovieNode* MovieTree::getNodeUncle(MovieNode* node) {
+	if (node->parent) {
+		if (node->parent->leftChild == node) {
+			return node->parent->rightChild;
+		}
+		else {
+			return node->parent->leftChild;
+		}
+	}
+	return NULL;
+}
+
+MovieNode* MovieTree::getNodeGrandparent(MovieNode* node) {
+	if (node->parent) {
+		return node->parent->parent;
+	}
+	return NULL;
+}

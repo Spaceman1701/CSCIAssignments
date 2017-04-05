@@ -42,7 +42,6 @@ class MovieTree
         void addMovieNode(int ranking, std::string title, int releaseYear, int quantity);
         void findMovie(std::string title);
         void rentMovie(std::string title);
-        bool isValid();
         int countLongestPath();
 
     protected:
@@ -64,6 +63,9 @@ class MovieTree
 		void printNodeInfo(MovieNode* n);
 
         MovieNode* searchMovieTree(MovieNode * node, std::string title);
+		MovieNode* getNodeUncle(MovieNode* node);
+		MovieNode* getNodeGrandparent(MovieNode* node);
+
         MovieNode *root;
         MovieNode *nil;
 

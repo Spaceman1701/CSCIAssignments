@@ -1,10 +1,3 @@
-#include <iostream>
-using namespace std;
-int main() {
-
-	return 0;
-}
-=======
 #include "MovieTree.h"
 #include <sstream>
 #include <fstream>
@@ -61,8 +54,6 @@ int main(int argc, char** argv) {
 		case '6':
 			should_quit = true;
 			break;
-		case '7':
-			cout << tree.verify() << endl;
 		}
 	}
 	cout << "Goodbye!" << endl;
