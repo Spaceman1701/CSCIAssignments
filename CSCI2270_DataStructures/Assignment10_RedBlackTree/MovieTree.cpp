@@ -1,11 +1,14 @@
 #include <string>
+#include <iostream>
 #include "MovieTree.h"
+#include <cassert>
 
 using namespace std;
-
+int total_adds = 0;
 MovieTree::MovieTree() {
 	root = NULL;
-	nil = NULL; //yeah... idk why this is here
+	nil = new MovieNode(-1, "NIL", -1, -1);
+	nil->isRed = false;
 }
 
 MovieTree::~MovieTree() {
@@ -24,34 +27,51 @@ int MovieTree::countMovieNodes() {
 	return countMovieNodes(root);
 }
 
+int MovieTree::countLongestPath() {
+	return 0;
+}
+
 void MovieTree::deleteMovieNode(std::string title) {
 	MovieNode* to_delete = searchMovieTree(root, title);
-	if (n->leftChild && n->rightChild) {
-		MovieNode* replacement = treeMinimum(n->rightChild);
-		n->title = replacement->title;
-		n->quantity = replacement->quantity;
-		n->ranking = replacement->ranking;
-		n->year = replacement->year;
+	if (to_delete->leftChild != nil && to_delete->rightChild != nil) {
+		MovieNode* replacement = treeMinimum(to_delete->rightChild);
+		to_delete->title = replacement->title;
+		to_delete->quantity = replacement->quantity;
+		to_delete->ranking = replacement->ranking;
+		to_delete->year = replacement->year;
 		to_delete = replacement;
 	}
 	rbDelete(to_delete);
 }
 
 void MovieTree::addMovieNode(int ranking, std::string title, int releaseYear, int quantity) {
+	total_adds++;
 	MovieNode* n = new MovieNode(ranking, title, releaseYear, quantity);
+	n->leftChild = nil;
+	n->rightChild = nil;
 	n->isRed = true;
 	if (root == NULL) {
 		root = n;
 		n->isRed = false;
+		return;
 	}
 	else {
 		addNode(root, n);
 	}
+	rbAddFixup(n);
+	assert(verifyTree(root));
+	if (!rbValid(root)) {
+		cout << title << endl;
+		cout << countMovieNodes() << " " << total_adds << endl;
+		cout << root->parent << endl;
+		assert(false);
+	}
+	cout << countMovieNodes() << endl;
 }
 
 void MovieTree::findMovie(std::string title) {
 	MovieNode* n = searchMovieTree(root, title);
-	if (n == NULL) {
+	if (n == nil) {
 		cout << "Movie not found." << endl;
 	}
 	else {
@@ -61,7 +81,7 @@ void MovieTree::findMovie(std::string title) {
 
 void MovieTree::rentMovie(std::string title) {
 	MovieNode* n = searchMovieTree(root, title);
-	if (n == NULL) {
+	if (n == nil) {
 		cout << "Movie not found." << endl;
 	}
 	else {
@@ -74,7 +94,7 @@ void MovieTree::rentMovie(std::string title) {
 	}
 }
 
-void MovieNode::printNodeInfo(MovieNode* n) {
+void MovieTree::printNodeInfo(MovieNode* n) {
 	cout << "Movie Info:" << endl;
 	cout << "===========" << endl;
 	cout << "Ranking:" << n->ranking << endl;
@@ -85,7 +105,7 @@ void MovieNode::printNodeInfo(MovieNode* n) {
 
 void MovieTree::addNode(MovieNode* tree, MovieNode* new_node) {
 	if (new_node->title < tree->title) {
-		if (tree->leftChild == NULL) {
+		if (tree->leftChild == nil) {
 			tree->leftChild = new_node;
 			new_node->parent = tree;
 		}
@@ -94,7 +114,7 @@ void MovieTree::addNode(MovieNode* tree, MovieNode* new_node) {
 		}
 	}
 	else {
-		if (tree->rightChild == NULL) {
+		if (tree->rightChild == nil) {
 			tree->rightChild = new_node;
 			new_node->parent = tree;
 		}
@@ -102,7 +122,6 @@ void MovieTree::addNode(MovieNode* tree, MovieNode* new_node) {
 			addNode(tree->rightChild, new_node);
 		}
 	}
-	rbAddFixup(new_node);
 }
 
 void MovieTree::DeleteAll(MovieNode * node) {
@@ -120,44 +139,57 @@ void MovieTree::DeleteAll(MovieNode * node) {
 
 int MovieTree::countMovieNodes(MovieNode *node) {
 	int count = 0;
-	if (node->leftChild != NULL) {
-		count += countMovieNodes(node->leftChild, c);
+	if (node->leftChild != nil) {
+		count += countMovieNodes(node->leftChild);
 	}
-	if (node->rightChild != NULL) {
-		count += countMovieNodes(node->rightChild, c);
+	if (node->rightChild != nil) {
+		count += countMovieNodes(node->rightChild);
 	}
 	return count + 1;
 }
 
 MovieNode* MovieTree::searchMovieTree(MovieNode *node, std::string value) {
-	if (node == NULL) {
-		return NULL;
+	if (node == nil) {
+		return nil;
 	}
 	else if (node->title == value) {
 		return node;
 	}
-	else if (value > node->title && node->rightChild != NULL) {
+	else if (value > node->title && node->rightChild != nil) {
 		return searchMovieTree(node->rightChild, value);
 	}
-	else if (value < node->title && node->leftChild != NULL) {
+	else if (value < node->title && node->leftChild != nil) {
 		return searchMovieTree(node->leftChild, value);
 	}
-	return NULL;
+	return nil;
 }
 
 MovieNode* MovieTree::treeMinimum(MovieNode *node) {
-	if (node->leftChild != NULL) {
+	if (node->leftChild != nil) {
 		return treeMinimum(node->leftChild);
 	}
 	return node;
 }
 
+bool MovieTree::verifyTree(MovieNode* node) {
+	bool result = true;
+	if (node->leftChild != nil) {
+		result &= verifyTree(node->leftChild);
+		result &= node->leftChild->title < node->title;
+	}
+	if (node->rightChild != nil) {
+		result &= verifyTree(node->rightChild);
+		result &= node->rightChild->title > node->title;
+	}
+	return result;
+}
+
 void MovieTree::printMovieInventory(MovieNode* node) {
-	if (node->leftChild != NULL) {
+	if (node->leftChild != nil) {
 		printMovieInventory(node->leftChild);
 	}
 	cout << "Movie: " << node->title << " " << node->quantity << endl;
-	if (node->rightChild != NULL) {
+	if (node->rightChild != nil) {
 		printMovieInventory(node->rightChild);
 	}
 }
@@ -166,14 +198,16 @@ void MovieTree::rbAddFixup(MovieNode * node) {
 	MovieNode* uncle = NULL;
 	MovieNode* current_node = node;
 	while (1) {
-		if (!current_node->parent) {
+		if (current_node->parent == NULL) {
 			current_node->isRed = false;
+			cout << "Added black node (L) - " << node->title << endl;
 			return;
 		}
 		else if (!current_node->parent->isRed) {
+			cout << "Added red node (L) - " << node->title << endl;
 			return;
 		}
-		else if ((uncle = getNodeUncle(current_node)) && (uncle->isRed)) {
+		else if (((uncle = getNodeUncle(current_node)) != NULL) && (uncle->isRed)) {
 			current_node->parent->isRed = false;
 			uncle->isRed = false;
 			current_node = getNodeGrandparent(current_node);
@@ -183,80 +217,210 @@ void MovieTree::rbAddFixup(MovieNode * node) {
 			break;
 		}
 	}
-	MovieNode* gp = getNodeGrandparent(current_node);
-
-	if ((current_node == current_node->parent->rightChild) && (n->parent == gp->leftChild)) {
-		leftRotate(current_node->parent);
-		current_node = current_node->leftChild;
+	assert(!getNodeUncle(current_node)->isRed);
+	//cout << "finished insert loop" << endl;
+	MovieNode* p = current_node->parent;
+	MovieNode* g = getNodeGrandparent(current_node);
+	MovieNode* n = current_node;
+	//left left case
+	if (g->leftChild == p && p->leftChild == n) {
+		cout << "solved with (1) RIGHT" << endl;
+		rightRotate(g);
+		bool temp = p->isRed;
+		p->isRed = g->isRed;
+		g->isRed = temp;
 	}
-	else if ((current_node == current_node->parent->leftChild) && (current_node->parent == gp->rightChild)) {
-		rightRotate(current_node->parent);
-		current_node = current_node->rightChild;
+	else if (g->leftChild == p && p->rightChild == n) {
+		cout << "solved with (2) LEFT RIGHT" << endl;
+		leftRotate(p);
+		rightRotate(g);
+		bool temp = n->isRed;
+		n->isRed = g->isRed;
+		g->isRed = temp;
 	}
-
-	gp = getNodeGrandparent(current_node);
-	current_node->parent->isRed = false;
-	gp->isRed = true;
-	if (current_node = current_node->parent->leftChild) {
-		rightRotate(gp);
+	else if (g->rightChild == p && p->rightChild == n) {
+		cout << "solved with (1) LEFT" << endl;
+		leftRotate(g);
+		bool temp = p->isRed;
+		p->isRed = g->isRed;
+		g->isRed = temp;
 	}
 	else {
-		leftRotate(gp);
+		cout << "solved with (2) RIGHT LEFT" << endl;
+		rightRotate(p);
+		leftRotate(g);
+		bool temp = n->isRed;
+		n->isRed = g->isRed;
+		g->isRed = temp;
+	}
+	if (node->isRed) {
+		cout << "Added red node (O) - " << node->title;
+		if (node->parent) {
+			cout << " to parent: " << node->parent->title;
+		}
+		cout << endl;
+	}
+	else {
+		cout << "Added black node (O) - " << node->title << endl;
+		if (node->parent) {
+			cout << " to parent: " << node->parent->title;
+		}
+		cout << endl;
 	}
 }
 
 void MovieTree::leftRotate(MovieNode * x) {
-	MovieNode* new_root = x->rightChild;
-	x->rightChild = new_root->leftChild;
-	new_root->leftChild = x;
+	MovieNode* r = x->rightChild;
+	x->rightChild = r->leftChild;
+	if (x->rightChild != nil) {
+		x->rightChild->parent = x;
+	}
 
-	new_root->parent = x->parent;
-	x->rightChild->parent = x;
-	new_root->leftChild->parent = new_root;
+	r->parent = x->parent;
+	if (x->parent == NULL) {
+		root = r;
+	}
+	else if (x->parent->leftChild == x) {
+		x->parent->leftChild = r;
+	}
+	else {
+		x->parent->rightChild = r;
+	}
+	r->leftChild = x;
+	x->parent = r;
+
+	cout << "new subtree root: " << r->ranking;
+	if (r->parent) {
+		cout << " parent: " << r->parent->ranking;
+	}
+	cout << endl;
+
+	nil->parent = NULL;
+	nil->leftChild = NULL;
+	nil->rightChild = NULL;
 }
 
 void MovieTree::rbDelete(MovieNode* n) {
-	if (!n->leftChild && !n->rightChild) {
-		if (n == n->parent->leftChild) {
-			n->parent->leftChild = NULL;
-		}
+	if (n->parent) {
+		MovieNode** n_ptr = n->parent->leftChild == n ? &n->parent->leftChild : &n->parent->rightChild;
+		(*n_ptr) = n->rightChild; //can only be right child because in-order successor is used
 	}
-	else if ((n->leftChild != NULL) != (n->rightChild != NULL)) {
-		MovieNode* child = n->leftChild ? n->leftChild : n->rightChild;
-		if (n->parent) {
-			MovieNode** n_ptr = n->parent->leftChild == n ? &n->parent->leftChild : &n->parent->rightChild;
-			(*n_ptr) = child;
+	n->rightChild->parent = n->parent;
+	if (!n->isRed) {
+		if (n->rightChild->isRed) {
+			n->rightChild->isRed = false;
 		}
 		else {
-			root = child;
+			rbDeleteFixup(n->rightChild);
 		}
-		child->parent = n->parent;
 	}
-	rbDeleteFixup(n);
+	delete n;
 }
 
 void MovieTree::rightRotate(MovieNode * x) {
-	MovieNode* new_root = x->leftChild;
-	x->leftChild = new_root->rightChild;
-	new_root->rightChild = x;
+	if (x->parent) {
+		cout << "rotating right on: " << x->parent->title << endl;
+	}
+	MovieNode* r = x->leftChild;
+	x->leftChild = r->rightChild;
+	if (x->leftChild != nil) {
+		x->leftChild->parent = r;
+	}
 
-	new_root->parent = x->parent;
-	x->leftChild->parent = x;
-	new_root->rightChild->parent = new_root;
+	r->parent = x->parent;
+	if (x->parent == NULL) {
+		root = r;
+	}
+	else if (x->parent->leftChild == x) {
+		x->parent->leftChild = r;
+	}
+	else {
+		x->parent->rightChild = r;
+	}
+
+	r->rightChild = x;
+	x->parent = r;
+
+	cout << "new subtree root: " << r->ranking;
+	if (r->parent) {
+		cout << " parent: " << r->parent->ranking;
+	}
+
+	cout << endl;
+	nil->parent = NULL;
+	nil->leftChild = NULL;
+	nil->rightChild = NULL;
 }
 
-void MovieTree::rbDeleteFixup(MovieNode * node) {
+void MovieTree::rbDeleteFixup(MovieNode* node) { //this function has a lot of side effects...
+	MovieNode* parent = node->parent;
+	if (!parent) {
+		MovieNode* s = getNodeSibling(parent, node);
+		if (s->isRed) {
+			parent->isRed = true;
+			s->isRed = false;
+			node == parent->leftChild ? leftRotate(parent) : rightRotate(parent);
+
+			parent = node->parent;
+			s = getNodeSibling(parent, node);
+		}
+		if (!parent->isRed &&
+				!s->isRed &&
+				!s->leftChild->isRed &&
+				!s->rightChild->isRed) {
+			s->isRed = true;
+			rbDeleteFixup(parent);
+		}
+		else {
+			if (parent->isRed && !s->isRed && !s->leftChild->isRed && !s->rightChild->isRed) {
+				s->isRed = true;
+				node->parent->isRed = false;
+			}
+			else {
+				if ((node == parent->leftChild) && (!s->rightChild->isRed) && (s->leftChild->isRed)) {
+					s->isRed = true;
+					s->leftChild->isRed = false;
+
+					rightRotate(s);
+					parent = node->parent;
+					s = getNodeSibling(parent, node);
+				}
+				else if ((node == parent->rightChild) && (!s->leftChild->isRed)) {
+					s->isRed = true;
+					s->rightChild->isRed = false;
+
+					leftRotate(s);
+					parent = node->parent;
+					s = getNodeSibling(parent, node);
+				}
+				s->isRed = parent->isRed;
+				parent->isRed = false;
+				if (node == parent->leftChild) {
+					s->rightChild->isRed = false;
+					leftRotate(parent);
+				}
+				else {
+					s->leftChild->isRed = false;
+					rightRotate(parent);
+				}
+			}
+		}
+	}
+	else {
+		root = node;
+	}
+}
+
+void MovieTree::rbTransplant(MovieNode * u, MovieNode * v) {
 
 }
 
-void MovieTree::rbTransplant(MovieNode * u, MovieNode * v);
-
-int MovieTree::rbValid(MovieNode * node) { //switched "nil" to "null"
+int MovieTree::rbValid(MovieNode * node) {
 	int lh = 0;
 	int rh = 0;
 
 	// If we are at a nil node just return 1
-	if (node == NULL) {
+	if (node == nil) {
 		return 1;
 	} else
 	{
@@ -271,7 +435,7 @@ int MovieTree::rbValid(MovieNode * node) { //switched "nil" to "null"
 		}
 
 		// Check for valid binary search tree. 
-		if ((node->leftChild != NULL && node->leftChild->title.compare(node->title) > 0) || (node->rightChild != NULL && node->rightChild->title.compare(node->title) < 0))
+		if ((node->leftChild != nil && node->leftChild->title.compare(node->title) > 0) || (node->rightChild != nil && node->rightChild->title.compare(node->title) < 0))
 		{
 			cout << "This tree contains a binary tree violation" << endl;
 			return 0;
@@ -303,17 +467,16 @@ int MovieTree::rbValid(MovieNode * node) { //switched "nil" to "null"
 	}
 }
 
-int MovieTree::countLongestPath(MovieNode *node);
+int MovieTree::countLongestPath(MovieNode *node) {
+	return 0;
+}
 
 MovieNode* MovieTree::getNodeUncle(MovieNode* node) {
-	if (node->parent) {
-		if (node->parent->leftChild == node) {
-			return node->parent->rightChild;
-		}
-		else {
-			return node->parent->leftChild;
-		}
+	MovieNode* grandparent = getNodeGrandparent(node);
+	if (grandparent) {
+		return grandparent->leftChild == node->parent ? grandparent->rightChild : grandparent->leftChild;
 	}
+	cout << "node has no parent and/or grandparent, cannot have uncle" << endl;
 	return NULL;
 }
 
@@ -322,4 +485,8 @@ MovieNode* MovieTree::getNodeGrandparent(MovieNode* node) {
 		return node->parent->parent;
 	}
 	return NULL;
+}
+
+MovieNode* MovieTree::getNodeSibling(MovieNode* parent, MovieNode* node) {
+	return parent->leftChild == node ? parent->rightChild : parent->leftChild;
 }

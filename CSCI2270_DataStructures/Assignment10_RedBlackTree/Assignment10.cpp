@@ -1,6 +1,7 @@
 #include "MovieTree.h"
 #include <sstream>
 #include <fstream>
+#include <iostream>
 
 using namespace std;
 

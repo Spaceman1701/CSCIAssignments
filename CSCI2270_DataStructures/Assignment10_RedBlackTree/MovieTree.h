@@ -47,24 +47,27 @@ class MovieTree
     protected:
 
     private:
-		void addNode(MovieNode* root, MovieNode* new_node)
+		void addNode(MovieNode* root, MovieNode* new_node);
         void DeleteAll(MovieNode * node); //use this for the post-order traversal deletion of the tree
         void printMovieInventory(MovieNode * node);
         void rbAddFixup(MovieNode * node); // called after insert to fix tree
         void leftRotate(MovieNode * x); //rotate the tree left with x as the root of the rotation
         void rbDelete(MovieNode * z); //delete a node. Call this from deleteMovieNode, the actual delete functionality happens here.
         void rightRotate(MovieNode * x); //rotate the tree right with x as the root of the rotation
-        void rbDeleteFixup(MovieNode * node); //called after delete to fix the tree
+        void rbDeleteFixup(MovieNode* node); //called after delete to fix the tree
         void rbTransplant(MovieNode * u, MovieNode * v); //replace node u in tree with node v. Your solution doesn't necessarily need to use this method
         int rbValid(MovieNode * node); //check if the tree is valid, with node as the root of the tree
         int countMovieNodes(MovieNode *node); //number of unique titles in the tree
         int countLongestPath(MovieNode *node); //longest path from node to a leaf node in the tree
+		bool verifyTree(MovieNode* node);
 
 		void printNodeInfo(MovieNode* n);
+		MovieNode* treeMinimum(MovieNode *node);
 
         MovieNode* searchMovieTree(MovieNode * node, std::string title);
 		MovieNode* getNodeUncle(MovieNode* node);
 		MovieNode* getNodeGrandparent(MovieNode* node);
+		MovieNode* getNodeSibling(MovieNode* parent, MovieNode* node);
 
         MovieNode *root;
         MovieNode *nil;
