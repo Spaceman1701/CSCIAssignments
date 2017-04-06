@@ -11,7 +11,6 @@ int main(int argc, char** argv) {
 	char* file_name = argv[1];
 	MovieTree tree;
 	load_movies(tree, file_name);
-
 	bool should_quit = false;
 	while (!should_quit) {
 		cout << "======Main Menu======" << endl;
@@ -20,7 +19,8 @@ int main(int argc, char** argv) {
 		cout << "3. Print the inventory" << endl;
 		cout << "4. Delete a movie" << endl;
 		cout << "5. Count the movies" << endl;
-		cout << "6. Quit" << endl;
+		cout << "6. Count the longest path" << endl;
+		cout << "7. Quit" << endl;
 
 		char input;
 		cin >> input;
@@ -53,7 +53,13 @@ int main(int argc, char** argv) {
 			cout << "Tree contains: " << tree.countMovieNodes() << " movies." << endl;
 			break;
 		case '6':
+			cout << "Longest Path: " << tree.countLongestPath() << endl;
+			break;
+		case '7':
 			should_quit = true;
+			break;
+		case '8':
+			tree.printEasy();
 			break;
 		}
 	}

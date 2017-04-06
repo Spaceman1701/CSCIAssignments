@@ -3,6 +3,8 @@
 
 #include <string>
 
+using namespace std;
+
 struct MovieNode{
     int ranking;
     std::string title;
@@ -44,6 +46,8 @@ class MovieTree
         void rentMovie(std::string title);
         int countLongestPath();
 
+		void printEasy();
+
     protected:
 
     private:
@@ -71,6 +75,9 @@ class MovieTree
 
         MovieNode *root;
         MovieNode *nil;
+
+		void printWholeTree(MovieNode* n, string indent, bool last);
+		string redify(string text);
 
 
 };
