@@ -9,7 +9,8 @@ def monty_hall_simulate(switch, num_trials):
         if switch:
             reveal_door = random.choice([x for x in range(3) if x is not pick and x is not car_door])
             pick = random.choice([x for x in range(3) if x is not pick and x is not reveal_door])
-        if pick is car_door: success += 1
+        if pick is car_door:
+            success += 1
     return success / num_trials * 100
 
 
