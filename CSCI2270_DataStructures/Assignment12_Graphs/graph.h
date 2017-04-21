@@ -29,6 +29,7 @@ class Graph {
         virtual ~Graph();
         int findShortestPathLength(string start_city, string end_city);
         void computeDistricts();
+        void printAllNodes();
     private:
         int* edges;
         VertData* vertices;

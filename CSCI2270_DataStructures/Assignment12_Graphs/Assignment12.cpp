@@ -9,5 +9,8 @@ int main(int argc, char** argv) {
 
     Graph g(file_name);
 
+    g.computeDistricts();
+    g.printAllNodes();
+
     cout << g.findShortestPathLength("New York", "Chicago") << endl;
 }

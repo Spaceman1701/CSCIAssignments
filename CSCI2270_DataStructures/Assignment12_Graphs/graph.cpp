@@ -16,7 +16,11 @@ Graph::~Graph() {
     delete[] vertices;
     delete[] edges;
 }
-
+void Graph::printAllNodes() {
+    for (int i = 0; i < num_verts; ++i) {
+        cout << vertices[i].name << " District: " << vertices[i].district << endl;
+    }
+}
 void Graph::computeDistricts() {
     int current_district = 1;
     vertices[0].district = 1;
