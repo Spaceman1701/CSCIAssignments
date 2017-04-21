@@ -16,11 +16,42 @@ Graph::~Graph() {
     delete[] vertices;
     delete[] edges;
 }
+
+bool Graph::districtsFound() {
+    return vertices[0].district != -1;
+}
+
 void Graph::printAllNodes() {
     for (int i = 0; i < num_verts; ++i) {
-        cout << vertices[i].name << " District: " << vertices[i].district << endl;
+        cout << vertices[i].district << ":" << vertices[i].name << "-->";
+        int adj_count = 0;
+        for (int k = 0; k < num_verts; ++k) {
+            if (getEdgeBetween(i, k) > 0)
+                adj_count++;
+        }
+        for (int j = 0; j < num_verts; ++j) {
+            if (getEdgeBetween(i, j) > 0) {
+                adj_count--;
+                cout << vertices[j].name;
+                if (adj_count)
+                    cout << "***";
+            }
+        }
     }
 }
+
+bool Graph::containsCity(string& name) {
+    for (int i = 0; i < num_verts; ++i) {
+        if (vertices[i].name == name)
+            return true;
+    }
+    return false;
+}
+
+VertData& Graph::vertexFromIndex(int index) {
+    return vertices[index];
+}
+
 void Graph::computeDistricts() {
     int current_district = 1;
     vertices[0].district = 1;
@@ -51,6 +82,17 @@ int Graph::findShortestPathLength(string start_city, string end_city) {
     }
 
     return findShortestPathLength(start, end);
+}
+
+vector<int> Graph::findShortestPath(string start_city, string end_city) {
+    int start = -1, end = -1;
+    for (int i = 0; i < num_verts; ++i) {
+        if (vertices[i].name == start_city)
+            start = i;
+        else if (vertices[i].name == end_city)
+            end = i;
+    }
+    return findShortestPath(start, end);
 }
 
 int Graph::findShortestPathLength(int start, int end) {

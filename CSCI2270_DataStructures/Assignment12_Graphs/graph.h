@@ -28,8 +28,12 @@ class Graph {
         Graph(char* file_name);
         virtual ~Graph();
         int findShortestPathLength(string start_city, string end_city);
+        vector<int> findShortestPath(string start, string end);
         void computeDistricts();
         void printAllNodes();
+        bool districtsFound();
+        bool containsCity(string& name);
+        VertData& vertexFromIndex(int index);
     private:
         int* edges;
         VertData* vertices;
