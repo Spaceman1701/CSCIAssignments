@@ -45,7 +45,6 @@ int Graph::findShortestPathLength(string start_city, string end_city) {
         else if (vertices[i].name == end_city)
             end = i;
     }
-    cout << "start: " << start <<", end: " << end << endl;
 
     return findShortestPathLength(start, end);
 }
@@ -79,7 +78,7 @@ vector<int> Graph::findShortestPath(int start, int end) { //returns the shortest
             return output;
         }
         for (int i = 0; i < num_verts; ++i) {
-            if (path[i] != -1 && getEdgeBetween(current, i) > 0) {
+            if (path[i] == -1 && getEdgeBetween(current, i) > 0) {
                 path[i] = current;
                 discovered.push(i);
             }
@@ -104,7 +103,6 @@ vector<int> Graph::pathToVector(int end, int* path) {
 }
 
 int Graph::getEdgeBetween(int from, int to) {
-    cout << "Edge: " << edges[from + to * num_verts] << endl;
     return edges[from + to * num_verts];
 }
 
@@ -138,7 +136,6 @@ void Graph::parseFile(char* file_name) {
             setEdgeBetween(i, j, stoi(line_data[j + 1]));
         }
     }
-
     data_file.close();    
 }
 
