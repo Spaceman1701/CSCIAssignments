@@ -51,7 +51,6 @@ int Graph::findShortestPathLength(string start_city, string end_city) {
 
 int Graph::findShortestPathLength(int start, int end) {
     vector<int> path = findShortestPath(start, end);
-    cout << path.size() << endl;
     return path.size() == 0 ? -1 : path.size(); // the number of edges. change later when adjusted to account for weighting
 }
 

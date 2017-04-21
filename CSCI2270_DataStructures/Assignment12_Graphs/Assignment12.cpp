@@ -9,5 +9,5 @@ int main(int argc, char** argv) {
 
     Graph g(file_name);
 
-    cout << g.findShortestPathLength("Boston", "Chicago") << endl;
+    cout << g.findShortestPathLength("New York", "Chicago") << endl;
 }
