@@ -27,14 +27,15 @@ class Graph {
     public:
         Graph(char* file_name);
         virtual ~Graph();
-        int findShortestPath(string start_city, string end_city);
+        int findShortestPathLength(string start_city, string end_city);
         void computeDistricts();
     private:
         int* edges;
         VertData* vertices;
         int num_verts;
 
-        int findShortestPath(int start, int end);
+        vector<int> findShortestPath(int start, int end);
+        int findShortestPathLength(int start, int end);
         int getEdgeBetween(int vert_one, int vert_two);
         void setEdgeBetween(int vert_one, int vert_two, int value);
         void parseFile(char* file_name);

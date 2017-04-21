@@ -18,25 +18,47 @@ Graph::~Graph() {
 }
 
 void Graph::computeDistricts() {
-
+    int current_district = 1;
+    vertices[0].district = 1;
+    for (int current = 1; current < num_verts; ++current) {
+        if (vertices[current].district == -1) {
+            bool found = false;
+            for (int other = 0; other < num_verts; ++other) {
+                if (other != current && vertices[other].district != -1 && findShortestPathLength(current, other) > 0) { //if there's a path to the other
+                    vertices[current].district = vertices[other].district; //they're in the same district
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                vertices[current].district = ++current_district;
+            }
+        }
+    }
 }
 
-int Graph::findShortestPath(string start_city, string end_city) {
+int Graph::findShortestPathLength(string start_city, string end_city) {
     int start = -1, end = -1;
     for (int i = 0; i < num_verts; ++i) {
         if (vertices[i].name == start_city)
             start = i;
-        else if (verticies[i].name == end_city)
+        else if (vertices[i].name == end_city)
             end = i;
     }
+    cout << "start: " << start <<", end: " << end << endl;
 
-    vector<int> path = findShortestPath(start, end);
-    return path.size(); // the number of edges. change later when adjusted to account for weighting
+    return findShortestPathLength(start, end);
 }
 
-vector<int> findShortestPath(int start, int end) { //returns the shortest path. returns the whole path incase that's important for a later assignment
+int Graph::findShortestPathLength(int start, int end) {
+    vector<int> path = findShortestPath(start, end);
+    cout << path.size() << endl;
+    return path.size() == 0 ? -1 : path.size(); // the number of edges. change later when adjusted to account for weighting
+}
+
+vector<int> Graph::findShortestPath(int start, int end) { //returns the shortest path. returns the whole path incase that's important for a later assignment
     if (start == -1 || end == -1)
-        return -1;
+        return vector<int>();
     
     queue<int> discovered;
     discovered.push(start);
@@ -68,7 +90,7 @@ vector<int> findShortestPath(int start, int end) { //returns the shortest path. 
     return vector<int>(); //this might not work
 }
 
-vector<int> pathToVector(int end, int* path) {
+vector<int> Graph::pathToVector(int end, int* path) {
     vector<int> output;
 
     int current = end;
@@ -82,6 +104,7 @@ vector<int> pathToVector(int end, int* path) {
 }
 
 int Graph::getEdgeBetween(int from, int to) {
+    cout << "Edge: " << edges[from + to * num_verts] << endl;
     return edges[from + to * num_verts];
 }
 
