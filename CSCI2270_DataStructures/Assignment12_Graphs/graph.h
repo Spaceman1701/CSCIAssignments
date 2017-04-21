@@ -23,21 +23,12 @@ struct VertData {
     }
 };
 
-
-struct PathNode {
-    int key;
-    PathNode* parent;
-
-    PathNode(int key) {
-        this->key = key;
-    }
-}
-
 class Graph {
     public:
         Graph(char* file_name);
         virtual ~Graph();
         int findShortestPath(string start_city, string end_city);
+        void computeDistricts();
     private:
         int* edges;
         VertData* vertices;

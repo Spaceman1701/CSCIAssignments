@@ -17,6 +17,10 @@ Graph::~Graph() {
     delete[] edges;
 }
 
+void Graph::computeDistricts() {
+
+}
+
 int Graph::findShortestPath(string start_city, string end_city) {
     int start = -1, end = -1;
     for (int i = 0; i < num_verts; ++i) {
@@ -30,7 +34,7 @@ int Graph::findShortestPath(string start_city, string end_city) {
     return path.size(); // the number of edges. change later when adjusted to account for weighting
 }
 
-vector<int> findShortestPath(int start, int end) {
+vector<int> findShortestPath(int start, int end) { //returns the shortest path. returns the whole path incase that's important for a later assignment
     if (start == -1 || end == -1)
         return -1;
     
@@ -48,7 +52,9 @@ vector<int> findShortestPath(int start, int end) {
         int current = discovered.front();
         discovered.pop();
         if (current == end) {
-            return pathToVector(end, path);
+            vector<int> output = pathToVector(end, path);
+            delete[] path;
+            return output;
         }
         for (int i = 0; i < num_verts; ++i) {
             if (path[i] != -1 && getEdgeBetween(current, i) > 0) {
@@ -58,7 +64,8 @@ vector<int> findShortestPath(int start, int end) {
         }
     }
 
-    delete path;
+    delete[] path;
+    return vector<int>(); //this might not work
 }
 
 vector<int> pathToVector(int end, int* path) {
