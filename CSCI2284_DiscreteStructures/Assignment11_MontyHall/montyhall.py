@@ -14,11 +14,14 @@ def monty_hall_simulate(switch, num_trials):
     return success / num_trials * 100
 
 
-print(monty_hall_simulate(True, 100000))
-print(monty_hall_simulate(False, 100000))
+trial_sizes = [100, 1000, 100000]
 
+for trial in trial_sizes:
+    print("N = {trial}: ALWAYS SWAP: {swap}, NEVER SWAP: {noswap}".format(trial=trial,
+            swap=monty_hall_simulate(True, trial), noswap=monty_hall_simulate(False, trial)))
 
-
-
-
-
+# ---------------------------------------------------- results --------------------------------------------------
+# N = 100: ALWAYS SWAP: 69.0, NEVER SWAP: 35.0
+# N = 1000: ALWAYS SWAP: 65.60000000000001, NEVER SWAP: 35.099999999999994
+# N = 100000: ALWAYS SWAP: 66.792, NEVER SWAP: 33.628
+# ---------------------------------------------------------------------------------------------------------------

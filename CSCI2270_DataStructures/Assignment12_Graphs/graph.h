@@ -23,6 +23,16 @@ struct VertData {
     }
 };
 
+
+struct PathNode {
+    int key;
+    PathNode* parent;
+
+    PathNode(int key) {
+        this->key = key;
+    }
+}
+
 class Graph {
     public:
         Graph(char* file_name);
@@ -38,6 +48,7 @@ class Graph {
         void setEdgeBetween(int vert_one, int vert_two, int value);
         void parseFile(char* file_name);
         void splitLine(string& line, char sep, vector<string>& out);
+        vector<int> pathToVector(int end, int* path);
 };
 
 #endif

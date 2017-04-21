@@ -2,7 +2,7 @@
 #include <sstream>
 #include <iostream>
 #include <queue>
-#include <unordered_set>
+#include <algorithm>
 
 #include "graph.h"
 
@@ -26,25 +26,52 @@ int Graph::findShortestPath(string start_city, string end_city) {
             end = i;
     }
 
-    findShortestPath(start, end);
+    vector<int> path = findShortestPath(start, end);
+    return path.size(); // the number of edges. change later when adjusted to account for weighting
 }
 
-int findShortestPath(int start, int end) {
+vector<int> findShortestPath(int start, int end) {
     if (start == -1 || end == -1)
         return -1;
-    unordered_set<int> visited;
+    
     queue<int> discovered;
-
     discovered.push(start);
-    visited.insert(start);
+    
+    int* path = new int[num_verts];
+    for (int i = 0; i < num_verts; ++i)
+        path[i] = -1;
+    
+    path[start] = start; 
+    //since the key is an int, this is a visited set and values can point to the parent for path reconstruction
 
     while (!discovered.empty()) {
         int current = discovered.front();
         discovered.pop();
         if (current == end) {
-            
+            return pathToVector(end, path);
+        }
+        for (int i = 0; i < num_verts; ++i) {
+            if (path[i] != -1 && getEdgeBetween(current, i) > 0) {
+                path[i] = current;
+                discovered.push(i);
+            }
         }
     }
+
+    delete path;
+}
+
+vector<int> pathToVector(int end, int* path) {
+    vector<int> output;
+
+    int current = end;
+    while (path[current] != current) {
+        output.push_back(current);
+        current = path[current]; //pointer to it's parent'
+    }
+
+    reverse(output.begin(), output.end());
+    return output;
 }
 
 int Graph::getEdgeBetween(int from, int to) {
