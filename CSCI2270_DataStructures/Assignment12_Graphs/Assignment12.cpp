@@ -1,7 +1,7 @@
 #include <iostream>
 #include <string.h>
 
-#include "graph.h"
+#include "Graph.h"
 
 int main(int argc, char** argv) {
     char* file_name = argv[1];
@@ -49,7 +49,7 @@ int main(int argc, char** argv) {
                         break;
                     }
 
-                    cout << path.size();
+                    cout << path.size() - 1;
                     for (int i = 0; i < path.size(); ++i)
                         cout << "," << g.vertexFromIndex(path[i]).name;
                     cout << endl;

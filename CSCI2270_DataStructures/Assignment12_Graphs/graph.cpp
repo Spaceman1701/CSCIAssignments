@@ -4,7 +4,7 @@
 #include <queue>
 #include <algorithm>
 
-#include "graph.h"
+#include "Graph.h"
 
 using namespace std;
 
@@ -37,6 +37,7 @@ void Graph::printAllNodes() {
                     cout << "***";
             }
         }
+        cout << endl;
     }
 }
 
@@ -97,7 +98,7 @@ vector<int> Graph::findShortestPath(string start_city, string end_city) {
 
 int Graph::findShortestPathLength(int start, int end) {
     vector<int> path = findShortestPath(start, end);
-    return path.size() == 0 ? -1 : path.size(); // the number of edges. change later when adjusted to account for weighting
+    return path.size() == 0 ? -1 : path.size() - 1; // the number of edges. change later when adjusted to account for weighting
 }
 
 vector<int> Graph::findShortestPath(int start, int end) { //returns the shortest path. returns the whole path incase that's important for a later assignment
@@ -142,6 +143,7 @@ vector<int> Graph::pathToVector(int end, int* path) {
         output.push_back(current);
         current = path[current]; //pointer to it's parent'
     }
+    output.push_back(current);
 
     reverse(output.begin(), output.end());
     return output;
