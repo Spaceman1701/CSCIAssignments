@@ -40,9 +40,8 @@ PlayerData* OAHashTable::getAndCount(string& key, int* ops) {
     uint mod_hash = hash % getTableSize();
 
     uint inital_hash = mod_hash;
-
     while (table[mod_hash].value.year != -1 && table[mod_hash].key != key) {
-        ops++;
+        (*ops)++;
         hash++;
         mod_hash = hash % getTableSize();
 

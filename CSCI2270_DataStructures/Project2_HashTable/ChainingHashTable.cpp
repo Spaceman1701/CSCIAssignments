@@ -43,7 +43,7 @@ PlayerData* ChainingHashTable::getAndCount(string& key, int* ops) {
     Node* node = table[hash];
     while (node != NULL && node->key != key) {
         node = node->next;
-        ops++;
+        (*ops)++;
     }
     return node ? &node->value : NULL; 
 }
