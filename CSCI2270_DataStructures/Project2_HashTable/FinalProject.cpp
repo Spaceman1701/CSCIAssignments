@@ -84,7 +84,6 @@ int main(int argc, char** argv) {
     ChainingHashTable cTable(table_size);
 
     LoadPlayerData(file_name, oaTable, cTable);
-    cout << "finished loading data" << endl;
     if (!verifyData(&oaTable, &cTable, file_name)) {
         cout << "invalid tables" << endl;
     }
@@ -94,4 +93,43 @@ int main(int argc, char** argv) {
     cout << "Collisions using chaining: " << cTable.getNumConflicts() << endl;
     cout << "Search operations using open addressing: " << oaTable.getNumSearchOps() << endl;
     cout << "Search operations using chaining: " << cTable.getNumSearchOps() << endl; 
+
+    while (true) {
+        cout << "1. Query hash table" << endl;
+        cout << "2. Quit program" << endl;
+
+        char op;
+        cin >> op;
+
+        if (op == '1') {
+            cout << "Enter the LEAGUE ID of a player: ";
+            string id;
+            cin >> id;
+            int cops = 0;
+            int oaops = 0;
+            PlayerData* result = cTable.getAndCount(id, &cops);
+            oaTable.getAndCount(id, &oaops);
+            if (result) {
+                cout << result->toString() << endl;
+                cout << "Search operations using open addressing: " << oaops << endl;
+                cout << "Search operations using chaining: " << cops << endl;
+            } else {
+                cout << "Player not found." << endl;
+            }
+        } else if (op == '2') {
+            break;
+        } else if (op == 'A') { //for automated data gathering
+            string id;
+            cin >> id;
+            int cops = 0;
+            int oaops = 0;
+            PlayerData* result = cTable.getAndCount(id, &cops);
+            oaTable.getAndCount(id, &oaops);
+            if (result) {
+                cout << "FOUND " << oaops << " " << cops << endl;
+            } else {
+                cout << "NOTFOUND" << endl;
+            }
+        }
+    }
 }
